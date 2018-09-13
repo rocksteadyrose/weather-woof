@@ -22,73 +22,82 @@
     <div class="row">
         <form class="col s12">
             <div class="row">
-                <div class="input-field col s6">
-                    <input placeholder="Placeholder" id="zip" type="text" class="validate">
-                    <label for="zip">ZIP CODE</label>
+                <div class="input-field zipCode col s12">
+                    <input placeholder="Enter your ZIP code" type="text" class="validate" id="zipCode">
+                    <label for="zip">ZIP code</label>
                 </div>
         </form>
         </div>
 
         <div class="input-field breedList col s12">
-            <select id="breedDropdown" class="materialSelect">
+            <select id="breedDropdown" multiple>
                 <option value="" disabled selected>Breed</option>
             </select>
             <label>Breed</label>
         </div>
 
         <div class="input-field col s12">
-                <select>
-                    <option value="" disabled selected>Fur Color</option>
-                    <option value="1">Tan</option>
-                    <option value="2">Black</option>
-                    <option value="3">White</option>
-                    <option value="3">Multi</option>
-                </select>
-                <label>Fur Color</label>
-            </div>
+            <select>
+                <option value="" disabled selected>Fur Color</option>
+                <option value="1">Tan</option>
+                <option value="2">Black</option>
+                <option value="3">White</option>
+                <option value="3">Multi</option>
+            </select>
+            <label>Fur Color</label>
+        </div>
 
-            <div class="input-field col s12">
-                    <select>
-                        <option value="" disabled selected>Age</option>
-                        <option value="0">Under 1</option>
-                        <option value="1">1</option>
-                        <option value="2">2</option>
-                        <option value="3">3</option>
-                        <option value="4">4</option>
-                        <option value="5">5</option>
-                        <option value="6">6</option>
-                        <option value="7">7</option>
-                        <option value="8">8</option>
-                        <option value="9">9</option>
-                        <option value="10">10</option>
-                        <option value="11">11</option>
-                        <option value="12">12</option>
-                        <option value="13">13</option>
-                        <option value="14">14</option>
-                        <option value="15">15</option>
-                        <option value="16">16</option>
-                        <option value="17">17</option>
-                        <option value="18">18</option>
-                        <option value="19">19</option>
-                        <option value="20">20</option>
-                        <option value="Unknown">Unknown</option>
-                    </select>
-                    <label>Age</label>
-                </div>
+        <div class="input-field col s12">
+            <select>
+                <option value="" disabled selected>Age</option>
+                <option value="0">Under 1</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+                <option value="9">9</option>
+                <option value="10">10</option>
+                <option value="11">11</option>
+                <option value="12">12</option>
+                <option value="13">13</option>
+                <option value="14">14</option>
+                <option value="15">15</option>
+                <option value="16">16</option>
+                <option value="17">17</option>
+                <option value="18">18</option>
+                <option value="19">19</option>
+                <option value="20">20</option>
+                <option value="Unknown">Unknown</option>
+            </select>
+            <label>Age</label>
+        </div>
+
+        <div class="input-field col s12">
+            <input placeholder="Enter your dog's weight" type="text" class="validate">
+            <label for="weight">Weight</label>
+        </div>
+
+        <button class="btn waves-effect waves-light" type="submit" name="action" onclick="getWeather(), getSpecificBreedCalculation()">Submit
+            <i class="material-icons right">send</i>
+        </button>
 
         <script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
         <script type="text/javascript" src="assets/javascript/materialize.min.js"></script>
-        <script type="text/javascript" src="lib/api.js"></script>
+        <script type="text/javascript" src="lib/dogApi.js"></script>
+        <script type="text/javascript" src="lib/weatherApi.js"></script>
+        <script type="text/javascript" src="lib/conditionals.js"></script>
         <script>
             $(document).ready(function () {
                 $('select').formSelect();
 
-                if ($( ".input-field" ).hasClass( "breedList" )) {
+                if ($(".input-field").hasClass("breedList")) {
                     getBreedList();
                 }
             });
         </script>
-
 </body>
-
 </html>

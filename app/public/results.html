@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <title>🌤 Weather Woof 🐶</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="shortcut icon" href="images/favicon.ico">
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+        <!-- Compiled and minified CSS -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+        <!-- Compiled and minified JavaScript -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+        <!-- <link rel="stylesheet" href="assets/css/reset.css" type="text/css" /> -->
+        <link rel="stylesheet" href="assets/css/main.css" type="text/css" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    </head>
+
+<body>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script type="text/javascript" src="assets/materialize/materialize.min.js"></script>
+    <script type="text/javascript" src="data/dogApi.js"></script>
+    <!-- <script type="text/javascript" src="lib/weatherApi.js"></script> -->
+    <script type="text/javascript" src="data/conditionals.js"></script>
+        <script>
+            $(document).ready(function () {
+                // $('select').formSelect();
+
+                // if ($(".input-field").hasClass("breedList")) {
+                //     getBreedInfo()
+                // }
+
+                getBreedInfo();
+
+                console.log(points)
+
+                if (points < 60) {
+                    document.write("Your dog should not go outside!");
+                }
+            });
+        </script>
+</body>
+
+</html>

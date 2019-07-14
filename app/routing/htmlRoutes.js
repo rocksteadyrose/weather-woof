@@ -13,13 +13,14 @@ module.exports = function(app) {
 
     //Displays the survey page. When you go to that page, you want to display the html files
     //Pass in app(express) above to the export, and when the user goes to the url /survey, you deliver survey.html
-    app.get("/survey", function(req, res) {
-        res.sendFile(path.join(__dirname, "/../public/survey.html"));
-      });
+
+    // app.get("/index", function(req, res) {
+    //     res.sendFile(path.join(__dirname, "/../public/index.html"));
+    //   });
     
       // If they don't go to a predefined URL and are using our app, go to the homepage
       app.use(function(req, res) {
-        res.sendFile(path.join(__dirname, "/../public/home.html"));
+        res.sendFile(path.join(__dirname, "/../public/index.html"));
       });
     };
 //===================================================================

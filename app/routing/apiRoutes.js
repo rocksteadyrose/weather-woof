@@ -163,15 +163,15 @@ module.exports = function (app) {
               shouldntwalk = "Your dog is totally fine to walk"
             }
             
-            if (points < 80 || points > 60) {
+            if (points < 80) {
               shouldntwalk = "Your dog should be okay to walk"
             } 
             
-            if (points < 60 || points > 40) {
+            if (points < 60) {
               shouldntwalk = "Please be mindful if walking your dog"
             } 
             
-            if (points < 40 || points > 20) {
+            if (points < 40) {
               shouldntwalk = "Please take extreme caution if walking your dog"
             }
             

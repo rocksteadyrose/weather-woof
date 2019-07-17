@@ -34,157 +34,160 @@ module.exports = function (app) {
   //When the app tries to post to this URL, run this function. The function has a request and a response.
   app.post("/api/dogstested", function (req, res) {
     // This is the user data coming from the user. req.body is available since we're using the body-parser middleware
-    // var zip = dogData.zip;
     var dogInfo = req.body;
-    var points = 100;
-
     console.log(dogInfo)
-    // var dogsTested = breedArray;
+    var breeds;
+    var points = 100;
+    var notGreatRainyConditions;
+    var badRainyConditions;
+    var temperature;
 
-            // console.log(response.current.condition.text)
-            // console.log(response.current.temp_f)
-            // console.log(response.current.feelslike_f)
+    //Temps outside
+    function temperature(currentTemp) {
+      if (currentTemp > 80 && currentTemp < 90) {
+        points += -5;
+      } else if (currentTemp > 90 && currentTemp < 95) {
+        points += -10;
+      } else if (currentTemp > 95 && currentTemp < 100) {
+        points += -45;
+      } else if (currentTemp > 100) {
+        points += -50;
+      } else if (currentTemp < 40 && currentTemp > 20) {
+        points += -25;
+      } else if (currentTemp < 10 && currentTemp > 20) {
+        points += -10;
+      } else if (currentTemp < 10) {
+        points += -50;
+      }
+    }
 
-            if (dogInfo.feelsLike > 80 && dogInfo.feelsLike < 90) {
-              points += -5;
-                console.log(points)
-            }
+    //weather conditions
+    function conditions(currentTemp, condition) {
+      badRainyConditions = ["Thundery outbreaks possible", "Moderate rain", "Moderate or heavy sleet", "Moderate snow", "Heavy rain at times", "Heavy rain", "Moderate or heavy freezing rain", "Patchy heavy snow", "Heavy snow", "Ice pellets", "Moderate or heavy rain shower", "Torrential rain shower", "Moderate or heavy sleet showers", "Moderate or heavy snow showers", "Moderate or heavy showers of ice pellets", "Moderate or heavy rain with thunder", "Moderate or heavy snow with thunder", "Freezing fog", "Moderate rain at times"]
 
-            if (dogInfo.feelsLike > 90 && dogInfo.feelsLike < 95) {
-              points += -10;
-                console.log(points)
-            }
+      notGreatRainyConditions = ["Patchy sleet possible", "Patchy freezing drizzle possible", "Blowing snow", "Blizzard", "Freezing drizzle", "Heavy freezing drizzle", "Light freezing rain", "Light sleet", "Patchy light snow", "Light snow", "Patchy moderate snow", "Light rain shower", "Light sleet showers", "Light snow showers", "Light showers of ice pellets", "Patchy light rain with thunder", "Patchy light snow with thunder", "Mist", "Patchy rain possible", "Patchy light drizzle", "Light drizzle", "Patchy light rain", "Light rain"]
 
-            if (dogInfo.feelsLike > 95 && dogInfo.feelsLike < 100) {
-              points += -15;
-                console.log(points)
-            }
+      for (var i = 0; i < badRainyConditions.length || i < notGreatRainyConditions.length; i += 1) {
+        if (currentTemp < 50 && badRainyConditions.indexOf(condition[i]) != -1) {
+          points += -50;
+          console.log("bad weather")
+        } else if (currentTemp > 50 && badRainyConditions.indexOf(condition[i]) != -1) {
+          points += -30;
+          console.log("bad weather but not 50 degrees")
+        } else if (currentTemp < 50 && notGreatRainyConditions.indexOf(condition[i]) != -1) {
+          points += -30;
+          console.log("not great weather")
+        } else if (currentTemp > 50 && notGreatRainyConditions.indexOf(condition[i]) != -1) {
+          points += -20;
+          console.log("not great weather but not 50 degrees")
+        }
+      }
+    }
 
-            if (dogInfo.feelsLike > 100) {
-              points += -50;
-                console.log(points)
-            }
+    //breeds that don't do well in heat
+    function dogsBadInHeat(breed, furColor) {
+      breeds = ['Alaskan Malamute', 'English Bulldog', 'French Bulldog', 'Pomeranian', 'Cavalier King Charles Spaniel', 'Chow Chow', 'Pug', 'Boxer', 'Akita', 'Boston Terrier', 'Pekingese', 'Shih Tzu', 'Samoyed', 'Japanese Chin', 'Keeshond', 'Affenpinscher', 'American Eskimo Dog', 'Siberian Husky', 'Komondor'];
+      var pointSubtraction;
+      var moreThanOneMatchedBreed;
 
-            if (dogInfo.feelsLike < 40 && dogInfo.feelsLike > 20) {
-              points += -25;
-                console.log(points)
-            }
-
-            if (dogInfo.feelsLike < 10 && dogInfo.feelsLike > 20) {
-              points += -10;
-                console.log(points)
-            }
-
-            if (dogInfo.feelsLike < 10) {
-              points += -50;
-                console.log(points)
-            }
-
-            if (dogInfo.feelsLike < 50 && dogInfo.condition === "Mist" || dogInfo.condition === "Patchy rain possible" || dogInfo.condition === "Freezing fog" || dogInfo.condition === "Patchy light drizzle" || dogInfo.condition === "Light drizzle" || dogInfo.condition === "Patchy light rain" || dogInfo.condition === "Light rain" || dogInfo.condition === "Moderate rain at times" || dogInfo.condition === "Light rain shower") {
-              points += -30;
-                console.log(points)
-            }
-
-            if (dogInfo.feelsLike < 50 && dogInfo.condition === "Patchy sleet possible" || dogInfo.condition === "Patchy freezing drizzle possible" || dogInfo.condition === "Thundery outbreaks possible" || dogInfo.condition === "Blowing snow" || dogInfo.condition === "Blizzard" || dogInfo.condition === "Freezing drizzle" || dogInfo.condition === "Heavy freezing drizzle" || dogInfo.condition === "Moderate rain" || dogInfo.condition === "Heavy rain at times" || dogInfo.condition === "Heavy rain" || dogInfo.condition === "Light freezing rain" || dogInfo.condition === "Moderate or heavy freezing rain" || dogInfo.condition === "Light sleet" || dogInfo.condition === "Moderate or heavy sleet" || dogInfo.condition === "Patchy light snow" || dogInfo.condition === "Light snow" || dogInfo.condition === "Patchy moderate snow" || dogInfo.condition === "Moderate snow" || dogInfo.condition === "Patchy heavy snow" || dogInfo.condition === "Heavy snow" || dogInfo.condition === "Ice pellets" || dogInfo.condition === "Light rain shower" || dogInfo.condition === "Moderate or heavy rain shower" || dogInfo.condition === "Torrential rain shower" || dogInfo.condition === "Light sleet showers" || dogInfo.condition === "Moderate or heavy sleet showers" || dogInfo.condition === "Light snow showers" || dogInfo.condition === "Moderate or heavy snow showers" || dogInfo.condition === "Light showers of ice pellets" || dogInfo.condition === "Light showers of ice pellets" || dogInfo.condition === "Moderate or heavy showers of ice pellets" || dogInfo.condition === "Patchy light rain with thunder" || dogInfo.condition === "Moderate or heavy rain with thunder" || dogInfo.condition === "Patchy light snow with thunder" || dogInfo.condition === "Moderate or heavy snow with thunder") {
-              points += -50;
-                console.log(points)
-            }
-
-            // for (i = 0; i < shortNose.length; i++) {
-
-            //     if (dogInfo.shortNose.indexOf(specificBreed[i]) > -1 && dogInfo.feelsLike > 80) {
-            //       points += -10;
-            //         console.log(points)
-            //     }
-            // }
-
-            // for (i = 0; i < thickFur.length; i++) {
-
-            //     if (dogInfo.thickFur.indexOf(specificBreed[i]) > -1 && feelsdogInfo.feelsLikeLike > 80) {
-            //       points += -10;
-            //         console.log(points)
-            //     }
-            // }
-
-            if (dogInfo.furColor === "Black") {
-              points += -20;
-                console.log(points)
-            }
-
-           if (dogInfo.furColor === "Multi - Mostly Dark Colored") {
-            points += -15;
-              console.log(points)
+      for (var i = 0; i < breeds.length; i += 1) {
+        if (breed.length == 1) {
+          if (breeds.indexOf(breed[i]) != -1) {
+            points += -30;
+            console.log("one breed that matches")
           }
+        } else if (breed.length > 1) {
+          if (breeds.indexOf(breed[i]) != -1) {
+            moreThanOneMatchedBreed = "yes";
+            console.log("more than one breed that matches")
+          }
+        }
+      }
+      if (moreThanOneMatchedBreed === "yes") {
+        pointSubtraction = breed.length * 5;
+        points = points - 30 - pointSubtraction;
+        console.log("new total:" + points)
+      }
 
-            if (dogInfo.health === "Poor" && dogInfo.feelsLike > 80 || dogInfo.health === "Very Poor" && dogInfo.feelsLike > 75 || dogInfo.health === "Poor" && dogInfo.feelsLike < 35 || dogInfo.health === "Very Poor" && dogInfo.feelsLike < 40) {
-              points += -30;
-                console.log(points)
-            }
+      if (furColor === "Black") {
+        points += -20;
+        console.log("black fur")
+      } else if (furColor === "Multi - Mostly Dark Colored") {
+        points += -15;
+        console.log("multi dark fur")
+      }
+    }
+   
 
-            if (dogInfo.weightQuestion === "Yes") {
-              points += -15;
-                console.log(points)
-            }
+    if (dogInfo.health === "Poor" && dogInfo.feelsLike > 80 || dogInfo.health === "Very Poor" && dogInfo.feelsLike > 75 || dogInfo.health === "Poor" && dogInfo.feelsLike < 35 || dogInfo.health === "Very Poor" && dogInfo.feelsLike < 40) {
+      points += -30;
+    }
 
-            //Puppy
-            if (dogInfo.age === "Under 1") {
-              points += -10;
-                console.log(points)
-            }
+    if (dogInfo.weightQuestion === "Yes") {
+      points += -15;
+    }
 
-            //Toy & Small Dog
-            if (dogInfo.weight < 15 && dogInfo.age > 10) {
-              points += -30;
-                console.log(points)
-            }
+    //Puppy
+    if (dogInfo.age === "Under 1") {
+      points += -10;
+    }
 
-            //Medium Dog
-            if (dogInfo.weight < 50 && dogInfo.weight > 15 && dogInfo.age > 8) {
-              points += -30;
-                console.log(points)
-            }
+    //Toy & Small Dog
+    if (dogInfo.weight < 15 && dogInfo.age > 10) {
+      points += -30;
+    }
 
-            //Large Dog
-            if (dogInfo.weight < 80 && dogInfo.weight > 50 && dogInfo.age > 7) {
-              points += -30;
-                console.log(points)
-            }
+    //Medium Dog
+    if (dogInfo.weight < 50 && dogInfo.weight > 15 && dogInfo.age > 8) {
+      points += -30;
+    }
 
-            //Giant Dog
-            if (dogInfo.weight > 80 && dogInfo.age > 5) {
-              points += -30;
-                console.log(points)
-                //Source: The Living Well Guide for Senior Dogs, Diane Morgan, Wayne Hunthausen DVM
-            }
+    //Large Dog
+    if (dogInfo.weight < 80 && dogInfo.weight > 50 && dogInfo.age > 7) {
+      points += -30;
+    }
 
-            var shouldntwalk;
+    //Giant Dog
+    if (dogInfo.weight > 80 && dogInfo.age > 5) {
+      points += -30;
+      //Source: The Living Well Guide for Senior Dogs, Diane Morgan, Wayne Hunthausen DVM
+    }
 
-            if (points > 80) {
-              shouldntwalk = "Your dog is totally fine to walk"
-            }
-            
-            if (points < 80) {
-              shouldntwalk = "Your dog should be okay to walk"
-            } 
-            
-            if (points < 60) {
-              shouldntwalk = "Please be mindful if walking your dog"
-            } 
-            
-            if (points < 40) {
-              shouldntwalk = "Please take extreme caution if walking your dog"
-            }
-            
-            if (points < 20) {
-              shouldntwalk = "You should absolutely not walk your dog"
-            }
+    var shouldntwalk;
 
-            console.log(points)
+    //Points
 
-            //send the match to the front-end/json for the module
-            res.json({ shouldntwalk});
+    if (points > 80) {
+      shouldntwalk = "Your dog is totally fine to walk"
+    }
 
-            //Push the new user data into the api
-            dogData.push(req.body);
-          })
-  };
+    if (points < 80) {
+      shouldntwalk = "Your dog should be okay to walk"
+    }
+
+    if (points < 60) {
+      shouldntwalk = "Please be mindful if walking your dog"
+    }
+
+    if (points < 40) {
+      shouldntwalk = "Please take extreme caution if walking your dog"
+    }
+
+    if (points < 20) {
+      shouldntwalk = "You should absolutely not walk your dog"
+    }
+
+    console.log(points)
+
+    //send the match to the front-end/json for the module
+    res.json({ shouldntwalk });
+
+    //Push the new user data into the api
+    dogData.push(req.body);
+
+    temperature(dogInfo.feelsLike);
+    conditions(dogInfo.feelsLike, dogInfo.condition);
+    dogsBadInHeat(dogInfo.specifiedBreed, dogInfo.furColor)
+
+  })
+};

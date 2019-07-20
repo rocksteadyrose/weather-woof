@@ -40,7 +40,7 @@ module.exports = function (app) {
     var points = 100;
     var notGreatRainyConditions;
     var badRainyConditions;
-    var temperature;
+    var shouldntWalk;
 
     //Temps outside
     function temperature(currentTemp) {
@@ -88,106 +88,112 @@ module.exports = function (app) {
     function dogsBadInHeat(breed, furColor) {
       breeds = ['Alaskan Malamute', 'English Bulldog', 'French Bulldog', 'Pomeranian', 'Cavalier King Charles Spaniel', 'Chow Chow', 'Pug', 'Boxer', 'Akita', 'Boston Terrier', 'Pekingese', 'Shih Tzu', 'Samoyed', 'Japanese Chin', 'Keeshond', 'Affenpinscher', 'American Eskimo Dog', 'Siberian Husky', 'Komondor'];
       var pointSubtraction;
-      var moreThanOneMatchedBreed;
+      var selectedBreeds = breed.trim().split(/\s*,\s*/);
+      var matchedBreeds = [];
 
       for (var i = 0; i < breeds.length; i += 1) {
-        if (breed.length == 1) {
-          if (breeds.indexOf(breed[i]) != -1) {
+        if (selectedBreeds.length == 1) {
+          if (breeds.indexOf(selectedBreeds[i]) != -1) {
             points += -30;
-            console.log("one breed that matches")
           }
-        } else if (breed.length > 1) {
-          if (breeds.indexOf(breed[i]) != -1) {
-            moreThanOneMatchedBreed = "yes";
-            console.log("more than one breed that matches")
+        } else for (var j = 0; j < selectedBreeds.length; j++) {
+          if (breeds[i] === selectedBreeds[j]) {
+            matchedBreeds.push(selectedBreeds[j])
           }
         }
       }
-      if (moreThanOneMatchedBreed === "yes") {
-        pointSubtraction = breed.length * 5;
-        points = points - 30 - pointSubtraction;
-        console.log("new total:" + points)
-      }
-
-      if (furColor === "Black") {
-        points += -20;
-        console.log("black fur")
-      } else if (furColor === "Multi - Mostly Dark Colored") {
-        points += -15;
-        console.log("multi dark fur")
+      if (matchedBreeds.length > 0) {
+        pointSubtraction = matchedBreeds.length * 5;
+        points += -30 - pointSubtraction;
       }
     }
-   
 
-    if (dogInfo.health === "Poor" && dogInfo.feelsLike > 80 || dogInfo.health === "Very Poor" && dogInfo.feelsLike > 75 || dogInfo.health === "Poor" && dogInfo.feelsLike < 35 || dogInfo.health === "Very Poor" && dogInfo.feelsLike < 40) {
-      points += -30;
+    function health (dogHealth, currentTemp) {
+      if (dogHealth === "Poor" && currentTemp > 80 || dogHealth === "Very Poor" && currentTemp > 75 || dogHealth === "Poor" && currentTemp < 35 || dogHealth === "Very Poor" && currentTemp < 40) {
+        points += -30;
+      }
     }
 
-    if (dogInfo.weightQuestion === "Yes") {
+    function furColoring (furColor) {
+    if (furColor === "Black") {
+      points += -20;
+      console.log("black fur")
+    } else if (furColor === "Multi - Mostly Dark Colored") {
       points += -15;
+      console.log("multi dark fur")
+    }
+  }
+
+    console.log("new total:" + points)
+
+    function pointSystem(points) {
+      if (points > 80) {
+        shouldntwalk = "Your dog is totally fine to walk"
+      }
+
+      if (points < 80) {
+        shouldntwalk = "Your dog should be okay to walk"
+      }
+
+      if (points < 60) {
+        shouldntwalk = "Please be mindful if walking your dog"
+      }
+
+      if (points < 40) {
+        shouldntwalk = "Please take extreme caution if walking your dog"
+      }
+
+      if (points < 20) {
+        shouldntwalk = "You should absolutely not walk your dog"
+      }
+      //send the match to the front-end/json for the module
+      res.json({ shouldntwalk });
+      //Push the new user data into the api
+      dogData.push(req.body);
+      // console.log(shouldntWalk)
+      console.log(points)
     }
 
-    //Puppy
-    if (dogInfo.age === "Under 1") {
-      points += -10;
-    }
 
-    //Toy & Small Dog
-    if (dogInfo.weight < 15 && dogInfo.age > 10) {
-      points += -30;
-    }
+    
 
-    //Medium Dog
-    if (dogInfo.weight < 50 && dogInfo.weight > 15 && dogInfo.age > 8) {
-      points += -30;
-    }
+    // if (dogInfo.weightQuestion === "Yes") {
+    //   points += -15;
+    // }
 
-    //Large Dog
-    if (dogInfo.weight < 80 && dogInfo.weight > 50 && dogInfo.age > 7) {
-      points += -30;
-    }
+    // //Puppy
+    // if (dogInfo.age === "Under 1") {
+    //   points += -10;
+    // }
 
-    //Giant Dog
-    if (dogInfo.weight > 80 && dogInfo.age > 5) {
-      points += -30;
-      //Source: The Living Well Guide for Senior Dogs, Diane Morgan, Wayne Hunthausen DVM
-    }
+    // //Toy & Small Dog
+    // if (dogInfo.weight < 15 && dogInfo.age > 10) {
+    //   points += -30;
+    // }
 
-    var shouldntwalk;
+    // //Medium Dog
+    // if (dogInfo.weight < 50 && dogInfo.weight > 15 && dogInfo.age > 8) {
+    //   points += -30;
+    // }
 
-    //Points
+    // //Large Dog
+    // if (dogInfo.weight < 80 && dogInfo.weight > 50 && dogInfo.age > 7) {
+    //   points += -30;
+    // }
 
-    if (points > 80) {
-      shouldntwalk = "Your dog is totally fine to walk"
-    }
+    // //Giant Dog
+    // if (dogInfo.weight > 80 && dogInfo.age > 5) {
+    //   points += -30;
+    //   //Source: The Living Well Guide for Senior Dogs, Diane Morgan, Wayne Hunthausen DVM
+    // }
 
-    if (points < 80) {
-      shouldntwalk = "Your dog should be okay to walk"
-    }
 
-    if (points < 60) {
-      shouldntwalk = "Please be mindful if walking your dog"
-    }
-
-    if (points < 40) {
-      shouldntwalk = "Please take extreme caution if walking your dog"
-    }
-
-    if (points < 20) {
-      shouldntwalk = "You should absolutely not walk your dog"
-    }
-
-    console.log(points)
-
-    //send the match to the front-end/json for the module
-    res.json({ shouldntwalk });
-
-    //Push the new user data into the api
-    dogData.push(req.body);
 
     temperature(dogInfo.feelsLike);
     conditions(dogInfo.feelsLike, dogInfo.condition);
-    dogsBadInHeat(dogInfo.specifiedBreed, dogInfo.furColor)
-
+    dogsBadInHeat(dogInfo.specifiedBreed, dogInfo.furColor);
+    health(dogInfo.health, dogInfo.feelsLike);
+    furColoring(dogInfo.furColor);
+    pointSystem(points);
   })
 };

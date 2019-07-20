@@ -7,11 +7,17 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
-        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <!-- Bootstrap core CSS -->
+    <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet">
+    <!-- jQuery UI CSS -->
+    <link href="//code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" type="text/css" rel="stylesheet">
+    <!-- Bootstrap styling for Typeahead -->
+    <link href="static/css/tokenfield-typeahead.css" type="text/css" rel="stylesheet">
+    <!-- Tokenfield CSS -->
+    <link href="static/css/bootstrap-tokenfield.css" type="text/css" rel="stylesheet">
     <!-- Compiled and minified CSS -->
     <!-- <link rel="stylesheet" href="assets/css/reset.css" type="text/css" /> -->
-    <link rel="stylesheet" href="static/assets/css/main.css" type="text/css" />
+    <link rel="stylesheet" href="static/css/main.css" type="text/css" />
 </head>
 
 <body>
@@ -22,7 +28,8 @@
 
     <div class="input-field col-sm-12">
         <div class="form-group">
-            <input type="email" class="form-control zipCode" id="exampleFormControlInput1" placeholder="Enter your ZIP code">
+            <input type="email" class="form-control zipCode" id="exampleFormControlInput1"
+                placeholder="Enter your ZIP code">
         </div>
     </div>
 
@@ -34,10 +41,15 @@
     <!-- </div> -->
 
     <div class="input-field col-sm-12">
-        <div class="bs-example breedDropdown">
-            <input type="text" class="typeahead tt-query" autocomplete="off" spellcheck="false" placeholder="Breed">
+        <div class="bs-example">
+            <div class="form-group">
+                <input type="text" class="form-control typeahead" id="tokenfield-typeahead" value="" placeholder="Type your breed" />
+            </div>
         </div>
     </div>
+
+    <!-- <input type="text" class="form-control" id="tokenfield-typeahead" value="" /> -->
+
 
     <div class="input-field col-sm-12">
         <div class="form-group">
@@ -61,7 +73,7 @@
                 <option value="" disabled selected>Health</option>
                 <option value="excellent">Excellent</option>
                 <option value="good">Good</option>
-                <option value="average"> </option>Average</option>
+                <option value="average">Average</option>
                 <option value="poor">Poor</option>
                 <option value="very poor">Very Poor</option>
             </select>
@@ -116,7 +128,8 @@
         </div>
     </div>
 
-    <button type="submit" data-toggle="modal" data-target="#dogModal" class="btn btn-primary" id="submit">Submit</button>
+    <button type="submit" data-toggle="modal" data-target="#dogModal" class="btn btn-primary"
+        id="submit">Submit</button>
 
     <!-- 
     <button data-target="results" class="btn waves-effect waves-light modal-trigger" type="submit" name="action"
@@ -127,23 +140,23 @@
     <!-- Modal Structure -->
 
     <div class="modal" id="dogModal" tabindex="-1" role="dialog" aria-labelledby="dogModal" aria-hidden="true">
-            <div class="modal-dialog" role="document">
-              <div class="modal-content">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
                 <div class="modal-header">
-                  <h5 class="modal-title">Should I Walk My Dog?</h5>
-                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                  </button>
+                    <h5 class="modal-title">Should I Walk My Dog?</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
                 </div>
                 <div class="modal-body">
-                  <p id="reason-explanation"></p>
+                    <p id="reason-explanation"></p>
                 </div>
                 <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                 </div>
-              </div>
             </div>
-          </div>
+        </div>
+    </div>
 
     <script>
         $(document).ready(function () {
@@ -152,50 +165,36 @@
                 $('#myInput').trigger('focus')
             })
 
-            // $(function () {
+            var dogBreedsList = [];
 
-            //     $.getJSON("static/js/breedlist.json", function (json) {
-            //         // console.log("success")
-            //         for (i = 0; i < json.length; i++) {
-            //             dogBreeds = json[i];
-            //             data = dogBreeds.breed
-            //             $('input.autocomplete').autocomplete({
-            //                 data: { "hey": "hey", "hi": "hi" }
-            //             })
+            $(function () {
+                $.getJSON("static/js/breedlist.json", function (json) {
+                    // console.log("success")
+                    for (i = 0; i < json.length; i++) {
+                        dogBreeds = json[i].breed;
+                        dogBreedsList.push(dogBreeds)}
 
-            //         }
-            //     })
-            // })
-
-
-            // instantiate the bloodhound suggestion engine
-            // Defining the local dataset
-            var cars = ['Audi', 'BMW', 'Bugatti', 'Ferrari', 'Ford', 'Lamborghini', 'Mercedes Benz', 'Porsche', 'Rolls-Royce', 'Volkswagen'];
+                    $('#tokenfield-typeahead').tokenfield({
+                        autocomplete: {
+                            source:
+                                dogBreedsList,
+                            delay: 100
+                        },
+                        showAutocompleteOnFocus: true
+                    });
+                });
+            })
 
             // Constructing the suggestion engine
-            var cars = new Bloodhound({
-                datumTokenizer: Bloodhound.tokenizers.whitespace,
-                queryTokenizer: Bloodhound.tokenizers.whitespace,
-                local: cars
-            });
 
-            // Initializing the typeahead
-            $('.typeahead').typeahead({
-                hint: true,
-                highlight: true, /* Enable substring highlighting */
-                minLength: 1 /* Specify minimum characters required for showing suggestions */
-            },
-                {
-                    name: 'cars',
-                    source: cars
-                });
+
 
             $("#submit").on("click", function (event) {
                 // event.preventDefault();
                 var weight = $('.weight').val();
                 var healthSelection = $('.health')[0];
                 var health = healthSelection.options[healthSelection.selectedIndex].text;
-                var specificBreed = $('.breedDropdown').val();
+                var specificBreed = $('input.typeahead').val();
                 var weightSelectionQuestion = $(".weight")[0];
                 var weightQuestion = weightSelectionQuestion.options[weightSelectionQuestion.selectedIndex].text;
                 var colorSelection = $(".furColor")[0];
@@ -220,8 +219,6 @@
                     condition: weatherFunction.condition,
                 };
 
-                console.log(formData);
-
                 var currentURL = window.location.origin;
 
                 $.post(currentURL + "/api/dogstested", formData, function (data) {
@@ -233,17 +230,23 @@
 
     </script>
 
-    <script type="text/javascript" src="static/js/dogapi.js"></script>
-    <!-- <script type="text/javascript" src="static/js/breedlist.json"></script> -->
-    <script type="text/javascript" src="static/js/weatherapi.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
-        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
-        crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+    <!-- Jquery -->
+    <script type="text/javascript" src="//code.jquery.com/jquery-1.9.1.js"></script>
+    <!-- Jquery UI -->
+    <script type="text/javascript" src="//code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+    <!-- Tokenfield -->
+    <script type="text/javascript" src="static/js/bootstrap-tokenfield.js"></script>
+    <!-- Typeahead -->
+    <script type="text/javascript" src="static/js/typeahead.bundle.js" charset="UTF-8"></script>
+    <!-- Bootstrap -->
+    <script type="text/javascript" src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
         integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
         crossorigin="anonymous"></script>
-    <script type="text/javascript" src="static/js/typeahead.bundle.js"></script>
+    <!-- Dog API -->
+    <script type="text/javascript" src="static/js/dogapi.js"></script>
+    <!-- Weather API -->
+    <script type="text/javascript" src="static/js/weatherapi.js"></script>
+
 
 </body>
 

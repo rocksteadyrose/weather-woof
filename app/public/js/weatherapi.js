@@ -19,4 +19,4 @@ function getWeather (zip) {
     });
     return result;
     }
-        
+    

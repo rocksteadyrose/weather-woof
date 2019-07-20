@@ -17,6 +17,18 @@ module.exports = function (app) {
   // In each of the below cases when a user visits a link
   // (ex: localhost:PORT/api/admin... they are shown a JSON of the data)
   // ---------------------------------------------------------------------------
+  var breeds;
+  var points = 100;
+  var notGreatRainyConditions;
+  var badRainyConditions;
+  var shouldntwalk;
+  var dogsWeatherComment;
+  var dogsConditionComment;
+  var dogsBreedComment;
+  var dogsHealthComment;
+  var dogsFurComment;
+  var dogsWeightComment;
+  var reason;
 
   app.get("/api/dogstested", function (req, res) {
     //Build a route where you can view the dog data
@@ -36,29 +48,32 @@ module.exports = function (app) {
     // This is the user data coming from the user. req.body is available since we're using the body-parser middleware
     var dogInfo = req.body;
     console.log(dogInfo)
-    var breeds;
-    var points = 100;
-    var notGreatRainyConditions;
-    var badRainyConditions;
-    var shouldntWalk;
 
     //Temps outside
     function temperature(currentTemp) {
       if (currentTemp > 80 && currentTemp < 90) {
         points += -5;
+        dogsWeatherComment = "yes";
       } else if (currentTemp > 90 && currentTemp < 95) {
         points += -10;
+        dogsWeatherComment = "yes";
       } else if (currentTemp > 95 && currentTemp < 100) {
         points += -45;
+        dogsWeatherComment = "yes";
       } else if (currentTemp > 100) {
         points += -50;
+        dogsWeatherComment = "yes";
       } else if (currentTemp < 40 && currentTemp > 20) {
         points += -25;
+        dogsWeatherComment = "yes";
       } else if (currentTemp < 10 && currentTemp > 20) {
         points += -10;
+        dogsWeatherComment = "yes";
       } else if (currentTemp < 10) {
         points += -50;
+        dogsWeatherComment = "yes";
       }
+      console.log("new total with temp outside:" + points)
     }
 
     //weather conditions
@@ -70,35 +85,43 @@ module.exports = function (app) {
       for (var i = 0; i < badRainyConditions.length || i < notGreatRainyConditions.length; i += 1) {
         if (currentTemp < 50 && badRainyConditions.indexOf(condition[i]) != -1) {
           points += -50;
+          dogsConditionComment = "yes";
           console.log("bad weather")
         } else if (currentTemp > 50 && badRainyConditions.indexOf(condition[i]) != -1) {
           points += -30;
+          dogsConditionComment = "yes";
           console.log("bad weather but not 50 degrees")
         } else if (currentTemp < 50 && notGreatRainyConditions.indexOf(condition[i]) != -1) {
           points += -30;
+          dogsConditionComment = "yes";
           console.log("not great weather")
         } else if (currentTemp > 50 && notGreatRainyConditions.indexOf(condition[i]) != -1) {
           points += -20;
+          dogsConditionComment = "yes";
           console.log("not great weather but not 50 degrees")
         }
       }
+      console.log("new total with weather condition subtraction:" + points)
     }
 
     //breeds that don't do well in heat
-    function dogsBadInHeat(breed, furColor) {
-      breeds = ['Alaskan Malamute', 'English Bulldog', 'French Bulldog', 'Pomeranian', 'Cavalier King Charles Spaniel', 'Chow Chow', 'Pug', 'Boxer', 'Akita', 'Boston Terrier', 'Pekingese', 'Shih Tzu', 'Samoyed', 'Japanese Chin', 'Keeshond', 'Affenpinscher', 'American Eskimo Dog', 'Siberian Husky', 'Komondor'];
+    function dogsBadInHeat(breed) {
+      breeds = ['Alaskan Malamute', 'English Bulldog', 'French Bulldog', 'Pomeranian', 'Cavalier King Charles Spaniel', 'Chow Chow', 'Pug', 'Boxer', 'Akita', 'Boston Terrier', 'Pekingese', 'Shih Tzu', 'Samoyed', 'Japanese Chin', 'Keeshond', 'Affenpinscher', 'American Eskimo Dog', 'Siberian Husky', 'Komondor', 'American Bulldog'];
       var pointSubtraction;
       var selectedBreeds = breed.trim().split(/\s*,\s*/);
       var matchedBreeds = [];
+      dogsBreedComment;
 
       for (var i = 0; i < breeds.length; i += 1) {
         if (selectedBreeds.length == 1) {
           if (breeds.indexOf(selectedBreeds[i]) != -1) {
             points += -30;
+            dogsBreedComment = "yes";
           }
         } else for (var j = 0; j < selectedBreeds.length; j++) {
           if (breeds[i] === selectedBreeds[j]) {
-            matchedBreeds.push(selectedBreeds[j])
+            matchedBreeds.push(selectedBreeds[j]);
+            dogsBreedComment = "yes";
           }
         }
       }
@@ -106,94 +129,125 @@ module.exports = function (app) {
         pointSubtraction = matchedBreeds.length * 5;
         points += -30 - pointSubtraction;
       }
+      console.log("new total due to breed:" + points)
     }
 
-    function health (dogHealth, currentTemp) {
+    function health(dogHealth, currentTemp) {
+      dogsHealthComment;
       if (dogHealth === "Poor" && currentTemp > 80 || dogHealth === "Very Poor" && currentTemp > 75 || dogHealth === "Poor" && currentTemp < 35 || dogHealth === "Very Poor" && currentTemp < 40) {
         points += -30;
+        dogsHealthComment = "yes";
       }
+      console.log("new total with health subtracted:" + points)
     }
 
-    function furColoring (furColor) {
-    if (furColor === "Black") {
-      points += -20;
-      console.log("black fur")
-    } else if (furColor === "Multi - Mostly Dark Colored") {
-      points += -15;
-      console.log("multi dark fur")
+    function furColoring(furColor) {
+      dogsFurComment;
+      if (furColor === "Black") {
+        points += -20;
+        dogsFurComment = "yes"
+      } else if (furColor === "Multi - Mostly Dark Colored") {
+        points += -15;
+        dogsFurComment = "yes"
+      }
+      console.log("new total with fur color subtracted:" + points)
     }
-  }
 
-    console.log("new total:" + points)
+    // function dogAge(age, weight) {
+    //   //Puppy
+    //   if (age === "Under 1") {
+    //     points += -10;
+    //   }
+
+    //   //Toy & Small Dog
+    //   else if (weight < 15 && age > 10) {
+    //     points += -30;
+    //   }
+
+    //   //Medium Dog
+    //   else if (weight < 50 && weight > 15 && age > 8) {
+    //     points += -30;
+    //   }
+
+    //   //Large Dog
+    //   else if (weight < 80 && weight > 50 && age > 7) {
+    //     points += -30;
+    //   }
+
+    //   //Giant Dog
+    //   else if (weight > 80 && age > 5) {
+    //     points += -30;
+    //     //Source: The Living Well Guide for Senior Dogs, Diane Morgan, Wayne Hunthausen DVM
+    //   }
+    //   console.log("new total with age subtracted:" + points)
+    // }
+
+    function dogWeight(weight) {
+      dogsWeightComment;
+      if (weight === "Yes") {
+        points += -15;
+        dogsWeightComment = "yes"
+      }
+      console.log("new total with weight subtracted:" + points)
+    }
 
     function pointSystem(points) {
       if (points > 80) {
         shouldntwalk = "Your dog is totally fine to walk"
-      }
-
-      if (points < 80) {
+      } if (points < 80 && points > 60) {
         shouldntwalk = "Your dog should be okay to walk"
-      }
-
-      if (points < 60) {
+      } if (points < 60 && points > 40) {
         shouldntwalk = "Please be mindful if walking your dog"
-      }
-
-      if (points < 40) {
+      } if (points < 40 && points > 20) {
         shouldntwalk = "Please take extreme caution if walking your dog"
-      }
-
-      if (points < 20) {
+      } else {
         shouldntwalk = "You should absolutely not walk your dog"
       }
-      //send the match to the front-end/json for the module
-      res.json({ shouldntwalk });
-      //Push the new user data into the api
-      dogData.push(req.body);
-      // console.log(shouldntWalk)
-      console.log(points)
+      console.log("new total:" + points);
     }
 
+    function reasons(weather, condition, breed, health, fur, weight) {
+      console.log(shouldntwalk)
+      if (shouldntwalk === "Please be mindful if walking your dog" ||
+        shouldntwalk === "Please take extreme caution if walking your dog" ||
+        shouldntwalk === "You should absolutely not walk your dog") {
+        if (weather === "yes") {
+          reason = "It feels like " + dogInfo.feelsLike + " outside. "
+        }
+        if (condition === "yes") {
+          reason = reason + "The weather is " + dogInfo.condition.toLowerCase(); + ". "
+        }
+        if (breed === "yes") {
+          reason = reason + "Your dog is a " + dogInfo.selectedBreeds.toLowerCase() + ". "
+        }
+        if (health === "yes") {
+          reason = reason + "Your dog's health is " + dogInfo.health.toLowerCase() + ". "
+        }
+        if (fur === "yes") {
+          reason = reason + "Your dog's fur color is " + dogInfo.furColor.toLowerCase() + ". "
+        }
+        if (weight === "yes") {
+          reason = reason + "Your dog is overweight."
+        }
+      }
+      //send the match to the front-end/json for the module
+      res.json({ shouldntwalk, reason });
+      //Push the new user data into the api
+      dogData.push(req.body);
+      console.log(reason)
+    }
 
-    
-
-    // if (dogInfo.weightQuestion === "Yes") {
-    //   points += -15;
-    // }
-
-    // //Puppy
-    // if (dogInfo.age === "Under 1") {
-    //   points += -10;
-    // }
-
-    // //Toy & Small Dog
-    // if (dogInfo.weight < 15 && dogInfo.age > 10) {
-    //   points += -30;
-    // }
-
-    // //Medium Dog
-    // if (dogInfo.weight < 50 && dogInfo.weight > 15 && dogInfo.age > 8) {
-    //   points += -30;
-    // }
-
-    // //Large Dog
-    // if (dogInfo.weight < 80 && dogInfo.weight > 50 && dogInfo.age > 7) {
-    //   points += -30;
-    // }
-
-    // //Giant Dog
-    // if (dogInfo.weight > 80 && dogInfo.age > 5) {
-    //   points += -30;
-    //   //Source: The Living Well Guide for Senior Dogs, Diane Morgan, Wayne Hunthausen DVM
-    // }
-
+    // console.log(reason)
 
 
     temperature(dogInfo.feelsLike);
     conditions(dogInfo.feelsLike, dogInfo.condition);
-    dogsBadInHeat(dogInfo.specifiedBreed, dogInfo.furColor);
+    dogsBadInHeat(dogInfo.specifiedBreed);
     health(dogInfo.health, dogInfo.feelsLike);
     furColoring(dogInfo.furColor);
+    // dogAge(dogInfo.age, dogInfo.weightQuestion);
+    dogWeight(dogInfo.weightQuestion);
     pointSystem(points);
+    reasons(dogsWeatherComment, dogsConditionComment, dogsBreedComment, dogsHealthComment, dogsFurComment, dogsWeightComment);
   })
 };

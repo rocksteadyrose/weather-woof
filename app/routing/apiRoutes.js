@@ -209,19 +209,19 @@ module.exports = function (app) {
       console.log("new total:" + points);
     }
 
+    function clearPoints() {
+      points = 100;
+    }
+
     function reasons(weather, condition, breed, health, fur, weight) {
-      // var lastSelectedBreed = selectedBreeds[selectedBreeds.length - 1].join("and");
-      lastSelectedBreed = selectedBreeds[selectedBreeds.length - 1];
-      if (selectedBreeds.length > 1) {
-      selectedBreeds.splice(selectedBreeds.length - 1, 0, "and")
-      }
-      if (matchedBreeds.length > 1) {
-      matchedBreeds.splice(matchedBreeds.length - 1, 0, "and")
-      }
-      console.log(selectedBreeds)
-      console.log(matchedBreeds)
-      selectedBreeds.toString()
-      matchedBreeds.toString()
+      console.log(breed)
+      var selectedBreedsString = selectedBreeds.toString();
+      var matchedBreedsString = matchedBreeds.toString()
+      var vowelRegex = '^[aieouAIEOU].*'
+      var vowelSelected = selectedBreedsString.match(vowelRegex)
+      var vowelMatched = matchedBreedsString.match(vowelRegex)
+      console.log(selectedBreedsString)
+      console.log(matchedBreedsString)
 
       if (shouldntwalk === "Please be mindful if walking your dog" ||
         shouldntwalk === "Please take extreme caution if walking your dog" ||
@@ -233,8 +233,49 @@ module.exports = function (app) {
           reason = reason + "The weather is " + dogInfo.condition.toLowerCase(); + ". "
         }
         if (breed === "yes") {
-          reason = reason + "Your dog is a " + selectedBreeds + ". Being a " + matchedBreeds + " makes them more affected by the heat. "
+          if (selectedBreeds.length > 2) {
+            selectedBreeds.splice(selectedBreeds.length - 1, 0, "and")
+            selectedBreedsString = selectedBreeds.toString().replace(/,/g, ', ').replace('and,', 'and');
+            selectedBreedsString = selectedBreedsString + " mix"
+          }
+          if (matchedBreeds.length > 2) {
+            matchedBreeds.splice(matchedBreeds.length - 1, 0, "and")
+            matchedBreedsString = matchedBreeds.toString().replace(/,/g, ', ').replace('and,', 'and');
+            // matchedBreedsString = matchedBreedsString + " mix"
+          }
+          if (selectedBreeds.length === 2) {
+            selectedBreeds.splice(1, 0, "and")
+            selectedBreedsString = selectedBreeds.toString().replace(/,/g, ' ');
+            selectedBreedsString = selectedBreedsString + " mix"
+          }
+          if (matchedBreeds.length === 2) {
+            matchedBreeds.splice(1, 0, "and")
+            matchedBreedsString = matchedBreeds.toString().replace(/,/g, ' ');
+            // matchedBreedsString = matchedBreedsString + " mix"
+          }
+          // if (selectedBreeds.length >= 2 && matchedBreeds.length === 1) {
+          //   matchedBreedsString = matchedBreedsString + " mix"
+          // }
+
+          if (vowelSelected) {
+            reason = reason + "Your dog is an " + selectedBreedsString + ". "
+          }
+          if (!vowelSelected) {
+            reason = reason + "Your dog is a " + selectedBreedsString + ". "
+          }
+          if ((matchedBreeds.length > 1) || (selectedBreeds.length > 1 && matchedBreeds.length === 1)) {
+            reason = reason + "Having " + matchedBreedsString + " in their mix makes them more affected by the heat. "
+          }
+          if (vowelMatched && selectedBreeds.length === 1) {
+            reason = reason + "Being a " + matchedBreedsString + " makes them more affected by the heat. "
+          }
+          else if (!vowelMatched && selectedBreeds.length === 1) {
+            reason = reason + "Being a " + matchedBreedsString + " makes them more affected by the heat. "
+          }
+
+          dogsBreedComment = "";
         }
+
         if (health === "yes") {
           reason = reason + "Your dog's health is " + dogInfo.health.toLowerCase() + ". "
         }
@@ -262,5 +303,6 @@ module.exports = function (app) {
     dogWeight(dogInfo.weightQuestion);
     pointSystem(points);
     reasons(dogsWeatherComment, dogsConditionComment, dogsBreedComment, dogsHealthComment, dogsFurComment, dogsWeightComment);
+    clearPoints();
   })
 };

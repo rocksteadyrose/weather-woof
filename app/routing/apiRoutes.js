@@ -18,6 +18,8 @@ module.exports = function (app) {
   // (ex: localhost:PORT/api/admin... they are shown a JSON of the data)
   // ---------------------------------------------------------------------------
   var breeds;
+  var selectedBreeds;
+  var matchedBreeds = [];
   var points = 100;
   var notGreatRainyConditions;
   var badRainyConditions;
@@ -108,8 +110,7 @@ module.exports = function (app) {
     function dogsBadInHeat(breed) {
       breeds = ['Alaskan Malamute', 'English Bulldog', 'French Bulldog', 'Pomeranian', 'Cavalier King Charles Spaniel', 'Chow Chow', 'Pug', 'Boxer', 'Akita', 'Boston Terrier', 'Pekingese', 'Shih Tzu', 'Samoyed', 'Japanese Chin', 'Keeshond', 'Affenpinscher', 'American Eskimo Dog', 'Siberian Husky', 'Komondor', 'American Bulldog'];
       var pointSubtraction;
-      var selectedBreeds = breed.trim().split(/\s*,\s*/);
-      var matchedBreeds = [];
+      selectedBreeds = breed.trim().split(/\s*,\s*/);
       dogsBreedComment;
 
       for (var i = 0; i < breeds.length; i += 1) {
@@ -117,6 +118,7 @@ module.exports = function (app) {
           if (breeds.indexOf(selectedBreeds[i]) != -1) {
             points += -30;
             dogsBreedComment = "yes";
+            matchedBreeds.push(selectedBreeds[i]);
           }
         } else for (var j = 0; j < selectedBreeds.length; j++) {
           if (breeds[i] === selectedBreeds[j]) {
@@ -130,6 +132,7 @@ module.exports = function (app) {
         points += -30 - pointSubtraction;
       }
       console.log("new total due to breed:" + points)
+      console.log(matchedBreeds)
     }
 
     function health(dogHealth, currentTemp) {
@@ -207,7 +210,19 @@ module.exports = function (app) {
     }
 
     function reasons(weather, condition, breed, health, fur, weight) {
-      console.log(shouldntwalk)
+      // var lastSelectedBreed = selectedBreeds[selectedBreeds.length - 1].join("and");
+      lastSelectedBreed = selectedBreeds[selectedBreeds.length - 1];
+      if (selectedBreeds.length > 1) {
+      selectedBreeds.splice(selectedBreeds.length - 1, 0, "and")
+      }
+      if (matchedBreeds.length > 1) {
+      matchedBreeds.splice(matchedBreeds.length - 1, 0, "and")
+      }
+      console.log(selectedBreeds)
+      console.log(matchedBreeds)
+      selectedBreeds.toString()
+      matchedBreeds.toString()
+
       if (shouldntwalk === "Please be mindful if walking your dog" ||
         shouldntwalk === "Please take extreme caution if walking your dog" ||
         shouldntwalk === "You should absolutely not walk your dog") {
@@ -218,7 +233,7 @@ module.exports = function (app) {
           reason = reason + "The weather is " + dogInfo.condition.toLowerCase(); + ". "
         }
         if (breed === "yes") {
-          reason = reason + "Your dog is a " + dogInfo.selectedBreeds.toLowerCase() + ". "
+          reason = reason + "Your dog is a " + selectedBreeds + ". Being a " + matchedBreeds + " makes them more affected by the heat. "
         }
         if (health === "yes") {
           reason = reason + "Your dog's health is " + dogInfo.health.toLowerCase() + ". "
@@ -230,15 +245,13 @@ module.exports = function (app) {
           reason = reason + "Your dog is overweight."
         }
       }
-      //send the match to the front-end/json for the module
-      res.json({ shouldntwalk, reason });
+      //send the responses to the front-end/json for the module
+      res.json({ shouldntwalk: shouldntwalk, reason: reason });
       //Push the new user data into the api
       dogData.push(req.body);
       console.log(reason)
+      matchedBreeds = [];
     }
-
-    // console.log(reason)
-
 
     temperature(dogInfo.feelsLike);
     conditions(dogInfo.feelsLike, dogInfo.condition);

@@ -149,6 +149,7 @@
                     </button>
                 </div>
                 <div class="modal-body">
+                    <p id="reason"></p>
                     <p id="reason-explanation"></p>
                 </div>
                 <div class="modal-footer">
@@ -190,7 +191,7 @@
 
 
             $("#submit").on("click", function (event) {
-                // event.preventDefault();
+                event.preventDefault();
                 var weight = $('.weight').val();
                 var healthSelection = $('.health')[0];
                 var health = healthSelection.options[healthSelection.selectedIndex].text;
@@ -221,8 +222,9 @@
                 var currentURL = window.location.origin;
 
                 $.post(currentURL + "/api/dogstested", formData, function (data) {
-                    $("#reason-explanation").text(data.shouldntwalk);
+                    $("#reason").text(data.shouldntwalk) + $("#reason-explanation").text(data.reason);
                 })
+                // $(".input-field")[0].reset();
             });
 
         });

@@ -5,7 +5,11 @@
     <meta charset="UTF-8">
     <title>🌤 Weather Woof 🐶</title>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <!--FONTS-->
+    <link href='https://fonts.googleapis.com/css?family=Raleway:900,300,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.2/css/font-awesome.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <!-- Bootstrap core CSS -->
     <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet">
@@ -15,127 +19,155 @@
     <link href="static/css/tokenfield-typeahead.css" type="text/css" rel="stylesheet">
     <!-- Tokenfield CSS -->
     <link href="static/css/bootstrap-tokenfield.css" type="text/css" rel="stylesheet">
-    <!-- Compiled and minified CSS -->
-    <!-- <link rel="stylesheet" href="assets/css/reset.css" type="text/css" /> -->
-    <link rel="stylesheet" href="static/css/main.css" type="text/css" />
+    <!--CSS-->
+    <link rel="stylesheet" type="text/css" href="static/css/grid.css">
+    <link rel="stylesheet" type="text/css" href="static/css/main.css">
+    <link rel="stylesheet" type="text/css" href="static/css/layout.css">
+    <link rel="stylesheet" type="text/css" href="static/css/main2.css" />
+    <link rel="stylesheet" type="text/css" href="static/css/jquery.bxslider.css">
+    <link rel="stylesheet" type="text/css" href="static/css/responsive.css">
+    <link rel="stylesheet" type="text/css" href="static/css/animate.css">
+    <!--JS-->
+    <script type="text/javascript">
+        var embedCode = '<iframe src="https://www.youtube.com/embed/-CpvBYE-rd8?rel=0&autoplay=1" frameborder="0" allowfullscreen></iframe>'
+    </script>
+    <script src="static/js/modernizr.custom.js"></script>
 </head>
 
 <body>
+    <!-- Paste this code after body tag -->
+    <div class="se-pre-con">
+        <div class="cssload-square">
+            <div>
+                <div>
+                    <div>
+                        <div>
+                            <div></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <div>
+                    <div>
+                        <div>
+                            <div></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="cssload-square cssload-two">
+            <div>
+                <div>
+                    <div>
+                        <div>
+                            <div></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <div>
+                    <div>
+                        <div>
+                            <div></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Ends -->
     <h2>
         Weather Woof
     </h2>
 
+    <div class="homebanner" id="home">
+        <div class="container">
+            <h1 class="os-animation" data-os-animation="bounceIn" data-os-animation-delay="0.2s">Enter your dog's info
+            </h1>
+            <span class="line os-animation" data-os-animation="bounceIn" data-os-animation-delay="0.4s"></span>
+            <p class="os-animation" data-os-animation="bounceIn" data-os-animation-delay="0.6s">To see if you should walk them right now.</p>
 
-    <div class="input-field col-sm-12">
-        <div class="form-group">
-            <input type="email" class="form-control zipCode" id="exampleFormControlInput1"
-                placeholder="Enter your ZIP code">
+            <div class="form">
+                <div class="input-field col-sm-12">
+                        <div class="form-group">
+                            <input type="email" class="form-control zipCode" id="exampleFormControlInput1"
+                                placeholder="Enter your ZIP code">
+                        </div>
+                    </div>
+                    <div class="input-field col-sm-12">
+                        <div id="breedinput">
+                            <div class="form-group">
+                                <input type="text" class="form-control typeahead" id="tokenfield-typeahead" value=""
+                                    placeholder="Type your breed" />
+                            </div>
+                        </div>
+                    </div>
+                
+                    <div class="input-field col-sm-12">
+                        <div class="form-group">
+                            <label for="exampleFormControlSelect1"></label>
+                            <select class="form-control furColor" id="exampleFormControlSelect1">
+                                <option value="" disabled selected>Fur Color</option>
+                                <option>Tan</option>
+                                <option>Black</option>
+                                <option>White</option>
+                                <option>Grey</option>
+                                <option>Multi - Mostly Light Colored</option>
+                                <option>Multi - Mostly Dark Colored</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                    <div class="input-field col-sm-12">
+                        <div class="form-group">
+                            <label for="exampleFormControlSelect1"></label>
+                            <select class="form-control health" id="exampleFormControlSelect1">
+                                <option value="" disabled selected>Health</option>
+                                <option value="excellent">Excellent</option>
+                                <option value="good">Good</option>
+                                <option value="average">Average</option>
+                                <option value="poor">Poor</option>
+                                <option value="very poor">Very Poor</option>
+                            </select>
+                        </div>
+                    </div>
+                
+                    <div class="input-field col-sm-12">
+                        <div class="form-group">
+                            <label for="exampleFormControlSelect1"></label>
+                            <select class="form-control age" id="exampleFormControlSelect1">
+                                <option value="" disabled selected>Age</option>
+                                <option value="puppy">Puppy</option>
+                                <option value="adult">Adult</option>
+                                <option value="senior">Senior</option>
+                                <option value="unknown">Unknown</option>
+                            </select>
+                        </div>
+                    </div>
+                
+                    <div class="input-field col-sm-12">
+                        <div class="form-group">
+                            <label for="exampleFormControlSelect1"></label>
+                            <select class="form-control weight" id="exampleFormControlSelect1">
+                                <option value="" disabled selected>Is Your Dog Considered Overweight?</option>
+                                <option value="1">Yes</option>
+                                <option value="2">No</option>
+                                <option value="3">Not sure</option>
+                            </select>
+                        </div>
+                    </div>
+                
+                    <button type="submit" data-toggle="modal" data-target="#dogModal" class="btn btn-primary"
+                        id="submit">Submit</button>
+
+            <a href="#about" class="os-animation" data-os-animation="bounceIn" data-os-animation-delay="0.8s"><img
+                    src="static/images/mouse.png" alt="" /></a>
         </div>
     </div>
-
-    <!-- <div class="input-field breedList col s12">
-        <select id="breedDropdown" multiple>
-            <option value="" disabled selected>Breed</option>
-        </select>
-        <label>Breed</label> -->
-    <!-- </div> -->
-
-    <div class="input-field col-sm-12">
-        <div class="bs-example">
-            <div class="form-group">
-                <input type="text" class="form-control typeahead" id="tokenfield-typeahead" value="" placeholder="Type your breed" />
-            </div>
-        </div>
-    </div>
-
-    <!-- <input type="text" class="form-control" id="tokenfield-typeahead" value="" /> -->
-
-
-    <div class="input-field col-sm-12">
-        <div class="form-group">
-            <label for="exampleFormControlSelect1"></label>
-            <select class="form-control furColor" id="exampleFormControlSelect1">
-                <option value="" disabled selected>Fur Color</option>
-                <option>Tan</option>
-                <option>Black</option>
-                <option>White</option>
-                <option>Grey</option>
-                <option>Multi - Mostly Light Colored</option>
-                <option>Multi - Mostly Dark Colored</option>
-            </select>
-        </div>
-    </div>
-
-    <div class="input-field col-sm-12">
-        <div class="form-group">
-            <label for="exampleFormControlSelect1"></label>
-            <select class="form-control health" id="exampleFormControlSelect1">
-                <option value="" disabled selected>Health</option>
-                <option value="excellent">Excellent</option>
-                <option value="good">Good</option>
-                <option value="average">Average</option>
-                <option value="poor">Poor</option>
-                <option value="very poor">Very Poor</option>
-            </select>
-        </div>
-    </div>
-
-    <div class="input-field col-sm-12">
-        <div class="form-group">
-            <label for="exampleFormControlSelect1"></label>
-            <select class="form-control age" id="exampleFormControlSelect1">
-                <option value="" disabled selected>Age</option>
-                <option value="0">Under 1</option>
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
-                <option value="6">6</option>
-                <option value="7">7</option>
-                <option value="8">8</option>
-                <option value="9">9</option>
-                <option value="10">10</option>
-                <option value="11">11</option>
-                <option value="12">12</option>
-                <option value="13">13</option>
-                <option value="14">14</option>
-                <option value="15">15</option>
-                <option value="16">16</option>
-                <option value="17">17</option>
-                <option value="18">18</option>
-                <option value="19">19</option>
-                <option value="20">20</option>
-                <option value="Unknown">Unknown</option>
-            </select>
-        </div>
-    </div>
-
-    <!-- <div class="input-field col s12">
-        <input placeholder="Enter your dog's weight" type="text" class="validate" id="weight">
-         <label for="weight">Weight</label> -->
-    <!-- </div> -->
-
-    <div class="input-field col-sm-12">
-        <div class="form-group">
-            <label for="exampleFormControlSelect1"></label>
-            <select class="form-control weight" id="exampleFormControlSelect1">
-                <option value="" disabled selected>Is Your Dog Considered Overweight?</option>
-                <option value="1">Yes</option>
-                <option value="2">No</option>
-                <option value="3">Not sure</option>
-            </select>
-        </div>
-    </div>
-
-    <button type="submit" data-toggle="modal" data-target="#dogModal" class="btn btn-primary"
-        id="submit">Submit</button>
-
-    <!-- 
-    <button data-target="results" class="btn waves-effect waves-light modal-trigger" type="submit" name="action"
-        id="submit">Submit
-        <i class="material-icons right">send</i>
-    </button> -->
 
     <!-- Modal Structure -->
 
@@ -173,7 +205,8 @@
                     // console.log("success")
                     for (i = 0; i < json.length; i++) {
                         dogBreeds = json[i].breed;
-                        dogBreedsList.push(dogBreeds)}
+                        dogBreedsList.push(dogBreeds)
+                    }
 
                     $('#tokenfield-typeahead').tokenfield({
                         autocomplete: {
@@ -230,7 +263,6 @@
         });
 
     </script>
-
     <!-- Jquery -->
     <script type="text/javascript" src="//code.jquery.com/jquery-1.9.1.js"></script>
     <!-- Jquery UI -->
@@ -247,8 +279,13 @@
     <script type="text/javascript" src="static/js/dogapi.js"></script>
     <!-- Weather API -->
     <script type="text/javascript" src="static/js/weatherapi.js"></script>
-
-
+    <!--Template-->
+    <script src="static/js/classie.js"></script>
+    <script src="static/js/borderMenu.js"></script>
+    <script src="static/js/jquery.mixitup.min.js"></script>
+    <script src="static/js/jquery.bxslider.js"></script>
+    <script src="static/js/waypoints.min.js"></script>
+    <script src="static/js/script.js"></script>
 </body>
 
 </html>

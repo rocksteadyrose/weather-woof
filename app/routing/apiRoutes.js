@@ -28,7 +28,9 @@ module.exports = function (app) {
   var dogsConditionComment;
   var dogsBreedComment;
   var dogsHealthComment;
+  var dogsAgeComment;
   var dogsFurComment;
+  var dogsFurThicknessComment;
   var dogsWeightComment;
   var reason;
 
@@ -136,16 +138,15 @@ module.exports = function (app) {
     }
 
     function health(dogHealth, currentTemp) {
-      dogsHealthComment;
       if (dogHealth === "Poor" && currentTemp > 80 || dogHealth === "Very Poor" && currentTemp > 75 || dogHealth === "Poor" && currentTemp < 35 || dogHealth === "Very Poor" && currentTemp < 40) {
         points += -30;
         dogsHealthComment = "yes";
       }
       console.log("new total with health subtracted:" + points)
+      console.log("dogsHealthComment: " + dogsHealthComment)
     }
 
     function furColoring(furColor) {
-      dogsFurComment;
       if (furColor === "Black") {
         points += -20;
         dogsFurComment = "yes"
@@ -156,37 +157,30 @@ module.exports = function (app) {
       console.log("new total with fur color subtracted:" + points)
     }
 
-    // function dogAge(age, weight) {
-    //   //Puppy
-    //   if (age === "Under 1") {
-    //     points += -10;
-    //   }
+    function furThickness(breed, weather) {
+      var coldWeatherBreeds = ["Siberian Husky", "Alaskan Malamute", "Saint Bernard", "Tibetan Terrier", "American Eskimo Dog", "Newfoundland", "Keeshond", "Akita", "Norwegian Elkhound", "Komondor"];
+      dogsFurThicknessComment;
+      if (coldWeatherBreeds.indexOf(breed) > -1 && weather < 40) {
+        points += 20;
+        // dogsFurThicknessComment = "yes"
+      }
+      console.log("new total with fur thickness and cold weather added:" + points)
+    }
 
-    //   //Toy & Small Dog
-    //   else if (weight < 15 && age > 10) {
-    //     points += -30;
-    //   }
+    function dogAge(age, weather) {
+      //Puppy
+      if (age === "Puppy" && weather > "85") {
+        points += -10;
+        dogsAgeComment = "yes"
+      } else if (age === "Senior" && weather > "85") {
+        points += -30;
+        dogsAgeComment = "yes"
+      }
 
-    //   //Medium Dog
-    //   else if (weight < 50 && weight > 15 && age > 8) {
-    //     points += -30;
-    //   }
-
-    //   //Large Dog
-    //   else if (weight < 80 && weight > 50 && age > 7) {
-    //     points += -30;
-    //   }
-
-    //   //Giant Dog
-    //   else if (weight > 80 && age > 5) {
-    //     points += -30;
-    //     //Source: The Living Well Guide for Senior Dogs, Diane Morgan, Wayne Hunthausen DVM
-    //   }
-    //   console.log("new total with age subtracted:" + points)
-    // }
+      console.log("new total with age subtracted:" + points)
+    }
 
     function dogWeight(weight) {
-      dogsWeightComment;
       if (weight === "Yes") {
         points += -15;
         dogsWeightComment = "yes"
@@ -196,24 +190,20 @@ module.exports = function (app) {
 
     function pointSystem(points) {
       if (points > 80) {
-        shouldntwalk = "Your dog is totally fine to walk"
+        shouldntwalk = "Your dog is totally fine to walk."
       } if (points < 80 && points > 60) {
-        shouldntwalk = "Your dog should be okay to walk"
+        shouldntwalk = "Your dog should be okay to walk."
       } if (points < 60 && points > 40) {
-        shouldntwalk = "Please be mindful if walking your dog"
+        shouldntwalk = "Please be mindful if walking your dog."
       } if (points < 40 && points > 20) {
-        shouldntwalk = "Please take extreme caution if walking your dog"
+        shouldntwalk = "Please take extreme caution if walking your dog."
       } else {
-        shouldntwalk = "You should absolutely not walk your dog"
+        shouldntwalk = "You should absolutely not walk your dog."
       }
       console.log("new total:" + points);
     }
 
-    function clearPoints() {
-      points = 100;
-    }
-
-    function reasons(weather, condition, breed, health, fur, weight) {
+    function reasons(weather, condition, breed, health, fur, age, weight) {
       console.log(breed)
       var selectedBreedsString = selectedBreeds.toString();
       var matchedBreedsString = matchedBreeds.toString()
@@ -223,15 +213,19 @@ module.exports = function (app) {
       console.log(selectedBreedsString)
       console.log(matchedBreedsString)
 
+      //Point messages
       if (shouldntwalk === "Please be mindful if walking your dog" ||
         shouldntwalk === "Please take extreme caution if walking your dog" ||
         shouldntwalk === "You should absolutely not walk your dog") {
+        //Temperature
         if (weather === "yes") {
           reason = "It feels like " + dogInfo.feelsLike + " outside. "
         }
+        //Condition
         if (condition === "yes") {
           reason = reason + "The weather is " + dogInfo.condition.toLowerCase(); + ". "
         }
+        //Breed
         if (breed === "yes") {
           if (selectedBreeds.length > 2) {
             selectedBreeds.splice(selectedBreeds.length - 1, 0, "and")
@@ -260,30 +254,39 @@ module.exports = function (app) {
           if (vowelSelected) {
             reason = reason + "Your dog is an " + selectedBreedsString + ". "
           }
-          if (!vowelSelected) {
+          else if (!vowelSelected) {
             reason = reason + "Your dog is a " + selectedBreedsString + ". "
           }
           if ((matchedBreeds.length > 1) || (selectedBreeds.length > 1 && matchedBreeds.length === 1)) {
             reason = reason + "Having " + matchedBreedsString + " in their mix makes them more affected by the heat. "
           }
           if (vowelMatched && selectedBreeds.length === 1) {
-            reason = reason + "Being a " + matchedBreedsString + " makes them more affected by the heat. "
+            reason = reason + "Being an " + matchedBreedsString + " makes them more affected by the heat. "
           }
           else if (!vowelMatched && selectedBreeds.length === 1) {
             reason = reason + "Being a " + matchedBreedsString + " makes them more affected by the heat. "
           }
-
           dogsBreedComment = "";
         }
-
+        //Health
         if (health === "yes") {
-          reason = reason + "Your dog's health is " + dogInfo.health.toLowerCase() + ". "
+          reason = reason + "Your dog's health is " + dogInfo.health.toLowerCase() + ", which will affect their sensitivity to this " + dogInfo.feelsLike + " temperature. "
         }
+        //Fur color
         if (fur === "yes") {
-          reason = reason + "Your dog's fur color is " + dogInfo.furColor.toLowerCase() + ". "
+          reason = reason + "Your dog's fur color is " + dogInfo.furColor.toLowerCase() + ". Dark fur absorbs heat more quickly, and dark colored dogs are at much higher risk of overheating. "
         }
+         //Age
+         if (age === "yes") {
+         if (dogInfo.age === "Puppy") {
+          reason = reason + "Since your dog is a puppy, he or she is still regulating their body's temperature when it's hot. "
+        } else if (dogInfo.age === "Senior") {
+          reason = reason + "Older dogs like yours can be more sensitive to hot weather than younger dogs and may fall victim to heatstroke more quickly. "
+        }
+      }
+        //Weight
         if (weight === "yes") {
-          reason = reason + "Your dog is overweight."
+          reason = reason + "Since your dog is overweight, he or she will be less tolerant of this weather."
         }
       }
       //send the responses to the front-end/json for the module
@@ -294,15 +297,27 @@ module.exports = function (app) {
       matchedBreeds = [];
     }
 
+    function clearPoints() {
+      points = 100;
+      dogsConditionComment = "no";
+      dogsBreedComment  = "no";
+      dogsHealthComment = "no";
+      dogsAgeComment = "no";
+      dogsFurComment = "no";
+      dogsFurThicknessComment = "no";
+      dogsWeightComment = "no";
+    }
+
     temperature(dogInfo.feelsLike);
     conditions(dogInfo.feelsLike, dogInfo.condition);
     dogsBadInHeat(dogInfo.specifiedBreed);
     health(dogInfo.health, dogInfo.feelsLike);
     furColoring(dogInfo.furColor);
-    // dogAge(dogInfo.age, dogInfo.weightQuestion);
+    furThickness(dogInfo.specifiedBreed, dogInfo.feelsLike)
+    dogAge(dogInfo.age, dogInfo.feelsLike);
     dogWeight(dogInfo.weightQuestion);
     pointSystem(points);
-    reasons(dogsWeatherComment, dogsConditionComment, dogsBreedComment, dogsHealthComment, dogsFurComment, dogsWeightComment);
+    reasons(dogsWeatherComment, dogsConditionComment, dogsBreedComment, dogsHealthComment, dogsFurComment, dogsAgeComment, dogsWeightComment);
     clearPoints();
   })
 };

@@ -4,8 +4,6 @@
 // API Routes are for our data. That helps determine what data the user sees as well as what data the user can post to our server to store
 
 var dogData = require("../data/dogstested");
-// var weather = require("../data/weatherapi");
-// var retrieveWeather = weather.getWeather();
 
 // ===============================================================================
 // ROUTING
@@ -59,10 +57,10 @@ module.exports = function (app) {
       if (currentTemp > 80 && currentTemp < 90) {
         points += -5;
         dogsWeatherComment = "yes";
-      } else if (currentTemp > 90 && currentTemp < 95) {
+      } else if (currentTemp >= 90 && currentTemp < 95) {
         points += -10;
         dogsWeatherComment = "yes";
-      } else if (currentTemp > 95 && currentTemp < 100) {
+      } else if (currentTemp >= 95 && currentTemp < 100) {
         points += -45;
         dogsWeatherComment = "yes";
       } else if (currentTemp > 100) {
@@ -71,10 +69,10 @@ module.exports = function (app) {
       } else if (currentTemp < 40 && currentTemp > 20) {
         points += -25;
         dogsWeatherComment = "yes";
-      } else if (currentTemp < 10 && currentTemp > 20) {
+      } else if (currentTemp < 10 && currentTemp >= 20) {
         points += -10;
         dogsWeatherComment = "yes";
-      } else if (currentTemp < 10) {
+      } else if (currentTemp <= 10) {
         points += -50;
         dogsWeatherComment = "yes";
       }
@@ -87,30 +85,37 @@ module.exports = function (app) {
 
       notGreatRainyConditions = ["Patchy sleet possible", "Patchy freezing drizzle possible", "Blowing snow", "Blizzard", "Freezing drizzle", "Heavy freezing drizzle", "Light freezing rain", "Light sleet", "Patchy light snow", "Light snow", "Patchy moderate snow", "Light rain shower", "Light sleet showers", "Light snow showers", "Light showers of ice pellets", "Patchy light rain with thunder", "Patchy light snow with thunder", "Mist", "Patchy rain possible", "Patchy light drizzle", "Light drizzle", "Patchy light rain", "Light rain"]
 
-      for (var i = 0; i < badRainyConditions.length || i < notGreatRainyConditions.length; i += 1) {
+      for (var i = 0; i < badRainyConditions.length; i += 1) {
+        if (badRainyConditions.indexOf(condition) >= 0) {
+          dogsConditionComment = "yes"
+        }
         if (currentTemp < 50 && badRainyConditions.indexOf(condition[i]) != -1) {
           points += -50;
-          dogsConditionComment = "yes";
           console.log("bad weather")
-        } else if (currentTemp > 50 && badRainyConditions.indexOf(condition[i]) != -1) {
+        } if (currentTemp > 50 && badRainyConditions.indexOf(condition[i]) != -1) {
           points += -30;
-          dogsConditionComment = "yes";
           console.log("bad weather but not 50 degrees")
-        } else if (currentTemp < 50 && notGreatRainyConditions.indexOf(condition[i]) != -1) {
+        }
+      }
+
+      for (var i = 0; i < notGreatRainyConditions.length; i += 1) {
+        if (notGreatRainyConditions.indexOf(condition) >= 0) {
+          dogsConditionComment = "yes";
+        }
+        if (currentTemp < 50 && notGreatRainyConditions.indexOf(condition[i]) != -1) {
           points += -30;
-          dogsConditionComment = "yes";
           console.log("not great weather")
-        } else if (currentTemp > 50 && notGreatRainyConditions.indexOf(condition[i]) != -1) {
+        } if (currentTemp > 50 && notGreatRainyConditions.indexOf(condition[i]) != -1) {
           points += -20;
-          dogsConditionComment = "yes";
           console.log("not great weather but not 50 degrees")
         }
       }
+
       console.log("new total with weather condition subtraction:" + points)
     }
 
     //breeds that don't do well in heat
-    function dogsBadInHeat(breed) {
+    function dogsBadInHeat(breed, currentTemp) {
       breeds = ['Alaskan Malamute', 'English Bulldog', 'French Bulldog', 'Pomeranian', 'Cavalier King Charles Spaniel', 'Chow Chow', 'Pug', 'Boxer', 'Akita', 'Boston Terrier', 'Pekingese', 'Shih Tzu', 'Samoyed', 'Japanese Chin', 'Keeshond', 'Affenpinscher', 'American Eskimo Dog', 'Siberian Husky', 'Komondor', 'American Bulldog'];
       var pointSubtraction;
       selectedBreeds = breed.trim().split(/\s*,\s*/);
@@ -119,18 +124,22 @@ module.exports = function (app) {
       for (var i = 0; i < breeds.length; i += 1) {
         if (selectedBreeds.length == 1) {
           if (breeds.indexOf(selectedBreeds[i]) != -1) {
-            points += -30;
-            dogsBreedComment = "yes";
             matchedBreeds.push(selectedBreeds[i]);
+            if (currentTemp > 80 || currentTemp < 40) {
+              points += -30;
+              dogsBreedComment = "yes";
+            }
           }
         } else for (var j = 0; j < selectedBreeds.length; j++) {
           if (breeds[i] === selectedBreeds[j]) {
+            if (currentTemp > 80 || currentTemp < 40) {
+              dogsBreedComment = "yes";
+            }
             matchedBreeds.push(selectedBreeds[j]);
-            dogsBreedComment = "yes";
           }
         }
       }
-      if (matchedBreeds.length > 0) {
+      if (matchedBreeds.length > 0 && currentTemp > 80 || matchedBreeds.length > 0 && currentTemp < 40) {
         pointSubtraction = matchedBreeds.length * 5;
         points += -30 - pointSubtraction;
       }
@@ -215,19 +224,23 @@ module.exports = function (app) {
       var vowelMatched = matchedBreedsString.match(vowelRegex)
 
       //Point messages
-      if (shouldntWalkPoint === "yes") {
+      if (condition != "yes") {
+        reason = reason + "The weather is " + dogInfo.condition.toLowerCase() + " and " + dogInfo.feelsLike + "°. "
+      }
+
+      if (shouldntWalkPoint === "yes" || condition === "yes") {
         console.log("shouldntWalkPoint:" + "yes")
 
         //Temperature
-        if (weather === "yes") {
-          reason = "It feels like " + dogInfo.feelsLike + " outside. "
+        if (weather === "yes" && shouldntWalkPoint === "yes") {
+          reason = "It feels like " + dogInfo.feelsLike + "° outside. "
         }
         //Condition
         if (condition === "yes") {
-          reason = reason + "The weather is " + dogInfo.condition.toLowerCase(); + ". "
-          } 
+          reason = reason + "Be aware: The weather is " + dogInfo.condition.toLowerCase() + ". "
+        }
         //Breed
-        if (breed === "yes") {
+        if (breed === "yes" && shouldntWalkPoint === "yes") {
           if (selectedBreeds.length > 2) {
             selectedBreeds.splice(selectedBreeds.length - 1, 0, "and")
             selectedBreedsString = selectedBreeds.toString().replace(/,/g, ', ').replace('and,', 'and');
@@ -270,50 +283,52 @@ module.exports = function (app) {
           dogsBreedComment = "";
         }
         //Health
-        if (health === "yes") {
-          reason = reason + "Your dog's health is " + dogInfo.health.toLowerCase() + ", which will affect their sensitivity to this " + dogInfo.feelsLike + " temperature. "
+        if (health === "yes" && shouldntWalkPoint === "yes") {
+          reason = reason + "Your dog's health is " + dogInfo.health.toLowerCase() + ", which will affect their sensitivity to this " + dogInfo.feelsLike + "° temperature. "
         }
         //Fur color
-        if (fur === "yes") {
+        if (fur === "yes" && shouldntWalkPoint === "yes") {
           reason = reason + "Your dog's fur color is " + dogInfo.furColor.toLowerCase() + ". Dark fur absorbs heat more quickly, and dark colored dogs are at much higher risk of overheating. "
         }
-         //Age
-         if (age === "yes") {
-         if (dogInfo.age === "Puppy") {
-          reason = reason + "Since your dog is a puppy, he or she is still regulating their body's temperature when it's hot. "
-        } else if (dogInfo.age === "Senior") {
-          reason = reason + "Older dogs like yours can be more sensitive to hot weather than younger dogs and may fall victim to heatstroke more quickly. "
+        //Age
+        if (age === "yes" && shouldntWalkPoint === "yes") {
+          if (dogInfo.age === "Puppy") {
+            reason = reason + "Since your dog is a puppy, he or she is still regulating their body's temperature when it's hot. "
+          } else if (dogInfo.age === "Senior") {
+            reason = reason + "Older dogs like yours can be more sensitive to hot weather than younger dogs and may fall victim to heatstroke more quickly. "
+          }
         }
-      }
         //Weight
-        if (weight === "yes") {
+        if (weight === "yes" && shouldntWalkPoint === "yes") {
           reason = reason + "Since your dog is overweight, he or she will be less tolerant of this weather."
         }
-         
+
       }
-     //send the responses to the front-end/json for the module
-     res.json({ shouldntwalk: shouldntwalk, reason: reason });
-     //Push the new user data into the api
-     dogData.push(req.body);
-     matchedBreeds = [];
-     console.log(reason)
+      //send the responses to the front-end/json for the module
+      res.json({ shouldntwalk: shouldntwalk, reason: reason });
+      //Push the new user data into the api
+      dogData.push(req.body);
+      matchedBreeds = [];
+      console.log(reason)
     }
 
     function clearPoints() {
       points = 100;
+      dogsWeatherComment = "no";
       dogsConditionComment = "no";
-      dogsBreedComment  = "no";
+      dogsBreedComment = "no";
       dogsHealthComment = "no";
       dogsAgeComment = "no";
       dogsFurComment = "no";
       dogsFurThicknessComment = "no";
       dogsWeightComment = "no";
       shouldntWalkPoint = "";
+      reason = "";
     }
 
     temperature(dogInfo.feelsLike);
     conditions(dogInfo.feelsLike, dogInfo.condition);
-    dogsBadInHeat(dogInfo.specifiedBreed);
+    dogsBadInHeat(dogInfo.specifiedBreed, dogInfo.feelsLike);
     health(dogInfo.health, dogInfo.feelsLike);
     furColoring(dogInfo.furColor);
     furThickness(dogInfo.specifiedBreed, dogInfo.feelsLike)

@@ -148,7 +148,7 @@ h1,h2,h3,h4,h5{
 }
 #breedinput{ 
 	text-align: left;
-	margin-top: 40px; 
+	/* margin-top: 40px;  */
   }
 
 #submit {
@@ -205,11 +205,11 @@ p#reason{
 	font-weight: 80px;
 	margin-bottom: 20px;
 }
-/* label { 
+label { 
 	float: left
-} */
+}
 label[for="breed"] {
-	text-align: center;
+float: none
 }
 .lapy{
 	background:url(images/lepy.jpg) no-repeat center center;

@@ -24,6 +24,8 @@ module.exports = function (app) {
   var notGreatRainyConditions;
   var badRainyConditions;
   var shouldntwalk;
+  var shouldntWalkPoint;
+  var reason;
   var dogsWeatherComment;
   var dogsConditionComment;
   var dogsBreedComment;
@@ -32,7 +34,6 @@ module.exports = function (app) {
   var dogsFurComment;
   var dogsFurThicknessComment;
   var dogsWeightComment;
-  var reason;
 
   app.get("/api/dogstested", function (req, res) {
     //Build a route where you can view the dog data
@@ -195,28 +196,26 @@ module.exports = function (app) {
         shouldntwalk = "Your dog should be okay to walk."
       } if (points < 60 && points > 40) {
         shouldntwalk = "Please be mindful if walking your dog."
+        shouldntWalkPoint = "yes";
       } if (points < 40 && points > 20) {
         shouldntwalk = "Please take extreme caution if walking your dog."
+        shouldntWalkPoint = "yes";
       } else {
         shouldntwalk = "You should absolutely not walk your dog."
+        shouldntWalkPoint = "yes";
       }
       console.log("new total:" + points);
     }
 
     function reasons(weather, condition, breed, health, fur, age, weight) {
-      console.log(breed)
       var selectedBreedsString = selectedBreeds.toString();
       var matchedBreedsString = matchedBreeds.toString()
       var vowelRegex = '^[aieouAIEOU].*'
       var vowelSelected = selectedBreedsString.match(vowelRegex)
       var vowelMatched = matchedBreedsString.match(vowelRegex)
-      console.log(selectedBreedsString)
-      console.log(matchedBreedsString)
 
       //Point messages
-      if (shouldntwalk === "Please be mindful if walking your dog" ||
-        shouldntwalk === "Please take extreme caution if walking your dog" ||
-        shouldntwalk === "You should absolutely not walk your dog") {
+      if (shouldntWalkPoint) {
         //Temperature
         if (weather === "yes") {
           reason = "It feels like " + dogInfo.feelsLike + " outside. "
@@ -288,13 +287,14 @@ module.exports = function (app) {
         if (weight === "yes") {
           reason = reason + "Since your dog is overweight, he or she will be less tolerant of this weather."
         }
+         
       }
-      //send the responses to the front-end/json for the module
-      res.json({ shouldntwalk: shouldntwalk, reason: reason });
-      //Push the new user data into the api
-      dogData.push(req.body);
-      console.log(reason)
-      matchedBreeds = [];
+     //send the responses to the front-end/json for the module
+     res.json({ shouldntwalk: shouldntwalk, reason: reason });
+     //Push the new user data into the api
+     dogData.push(req.body);
+     matchedBreeds = [];
+     console.log(reason)
     }
 
     function clearPoints() {

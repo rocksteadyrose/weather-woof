@@ -200,10 +200,16 @@ span.line2{
 	margin:50px auto;
 }
 .intro p{padding:0 200px;}
-#reason{
+p#reason{
 	font-size: 32px;
 	font-weight: 80px;
 	margin-bottom: 20px;
+}
+/* label { 
+	float: left
+} */
+label[for="breed"] {
+	text-align: center;
 }
 .lapy{
 	background:url(images/lepy.jpg) no-repeat center center;

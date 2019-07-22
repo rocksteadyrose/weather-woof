@@ -25,7 +25,7 @@ module.exports = function (app) {
   var badRainyConditions;
   var shouldntwalk;
   var shouldntWalkPoint;
-  var reason;
+  var reason = "";
   var dogsWeatherComment;
   var dogsConditionComment;
   var dogsBreedComment;
@@ -190,17 +190,17 @@ module.exports = function (app) {
     }
 
     function pointSystem(points) {
-      if (points > 80) {
+      if (points >= 80) {
         shouldntwalk = "Your dog is totally fine to walk."
-      } if (points < 80 && points > 60) {
+      } if (points < 80 && points >= 60) {
         shouldntwalk = "Your dog should be okay to walk."
-      } if (points < 60 && points > 40) {
+      } if (points < 60 && points >= 40) {
         shouldntwalk = "Please be mindful if walking your dog."
         shouldntWalkPoint = "yes";
-      } if (points < 40 && points > 20) {
+      } if (points < 40 && points >= 20) {
         shouldntwalk = "Please take extreme caution if walking your dog."
         shouldntWalkPoint = "yes";
-      } else {
+      } else if (points < 20) {
         shouldntwalk = "You should absolutely not walk your dog."
         shouldntWalkPoint = "yes";
       }
@@ -215,7 +215,9 @@ module.exports = function (app) {
       var vowelMatched = matchedBreedsString.match(vowelRegex)
 
       //Point messages
-      if (shouldntWalkPoint) {
+      if (shouldntWalkPoint === "yes") {
+        console.log("shouldntWalkPoint:" + "yes")
+
         //Temperature
         if (weather === "yes") {
           reason = "It feels like " + dogInfo.feelsLike + " outside. "
@@ -223,7 +225,7 @@ module.exports = function (app) {
         //Condition
         if (condition === "yes") {
           reason = reason + "The weather is " + dogInfo.condition.toLowerCase(); + ". "
-        }
+          } 
         //Breed
         if (breed === "yes") {
           if (selectedBreeds.length > 2) {
@@ -306,6 +308,7 @@ module.exports = function (app) {
       dogsFurComment = "no";
       dogsFurThicknessComment = "no";
       dogsWeightComment = "no";
+      shouldntWalkPoint = "";
     }
 
     temperature(dogInfo.feelsLike);

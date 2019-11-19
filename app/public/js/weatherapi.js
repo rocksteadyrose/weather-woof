@@ -1,5 +1,11 @@
+jQuery.ajaxPrefilter(function(options) {
+    if (options.crossDomain && jQuery.support.cors) {
+        options.url = 'https://cors-anywhere.herokuapp.com/' + options.url;
+    }
+});
+
 function getWeather (zip) {
-    var key = 'ed02eee49956436e94415434180309';
+    var key = 'c8412f951245f8b6ea0aded5362e6c66';
     // var zip = $("#zipCode").val();
     $.ajax({
         headers: {
@@ -7,14 +13,15 @@ function getWeather (zip) {
         },
         async: false,
         method: 'GET',
-        url: `http://api.apixu.com/v1/current.json?key=${key}&q=${zip}`,
+        url: `http://api.weatherstack.com/current?access_key=${key}&query=${zip}&units=f`,
         dataType: 'json',
         success: function (data) {
             result = {
-                "condition": data.current.condition.text,
-                "temp": data.current.temp_f,
-                "feelsLike": data.current.feelslike_f
+                "condition": data.current.weather_descriptions,
+                "temp": data.current.temperature,
+                "feelsLike": data.current.feelslike
             }
+            console.log(data)
         }
     });
     return result;

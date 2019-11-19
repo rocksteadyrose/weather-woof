@@ -222,10 +222,12 @@ module.exports = function (app) {
       var vowelRegex = '^[aieouAIEOU].*'
       var vowelSelected = selectedBreedsString.match(vowelRegex)
       var vowelMatched = matchedBreedsString.match(vowelRegex)
+      var editedCondition = dogInfo.condition[0];
+      var lowercaseCondition = editedCondition.toString().toLowerCase();
 
       //Point messages
       if (condition != "yes") {
-        reason = reason + "The weather is " + dogInfo.condition.toLowerCase() + " and " + dogInfo.feelsLike + "°. "
+        reason = reason + "The weather is " + lowercaseCondition + " and " + dogInfo.feelsLike + "°. "
       }
 
       if (shouldntWalkPoint === "yes" || condition === "yes") {
